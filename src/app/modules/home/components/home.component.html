@@ -1,0 +1,35 @@
+<div class="home-wrap">
+    <input class="home-btn" type="button" value="Add folder to root" (click)="showhideAddtoRoot(true)" />
+    <!-- tree node template -->
+    <div class="home-tree">
+        <ul>
+            <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: baseNode.children }"></ng-container>
+            <ng-template #recursiveList let-items>
+                <li *ngFor="let item of items">
+                    <span>
+                        {{item.name}}
+                        <label class="item-actions">
+                            <input type="button" *ngIf="item.type === CONST_FOLDER" value="+"
+                                (click)="onitemAdd(item,$event)" />
+                            <input type="button" value="x" (click)="onitemDelete(item,$event)" />
+                        </label>
+                    </span>
+                    <ul *ngIf="item.children?.length > 0">
+                        <ng-container *ngTemplateOutlet="recursiveList; context:{ $implicit: item.children }"></ng-container>
+                    </ul>
+                </li>
+            </ng-template>
+        </ul>
+    </div>
+    <!-- create root folder template -->
+    <div class="home-create-root-folder" *ngIf="addToRootActive || addToOtherActive">
+        <label *ngIf="addToOtherActive">Add file/folder to <i>{{currentItem.name}}</i></label>
+        <input type="text" name="foldername" [(ngModel)]="newFileFolderName" />
+        <select name="type" [(ngModel)]="newFileFolderType" *ngIf="addToOtherActive" >
+            <option value="1">Folder</option>
+            <option value="0">File</option>
+        </select>
+        <input type="button" value="✓" (click)="addtoTree(addToRootActive)" />
+        <input type="button" value="✖" (click)="reset(addToRootActive)" />
+    </div>
+</div>
